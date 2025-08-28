@@ -1,0 +1,103 @@
+agent_config:
+  name: "Langie Customer Support Agent"
+  description: "Lang Graph Agent for customer support workflows"
+  
+input_schema:
+  customer_name: str
+  email: str
+  query: str
+  priority: str
+  ticket_id: str
+
+stages:
+  - name: "INTAKE"
+    mode: "deterministic"
+    abilities:
+      - name: "accept_payload"
+        server: "internal"
+        
+  - name: "UNDERSTAND"
+    mode: "deterministic"
+    abilities:
+      - name: "parse_request_text"
+        server: "COMMON"
+      - name: "extract_entities"
+        server: "ATLAS"
+        
+  - name: "PREPARE"
+    mode: "deterministic"
+    abilities:
+      - name: "normalize_fields"
+        server: "COMMON"
+      - name: "enrich_records"
+        server: "ATLAS"
+      - name: "add_flags_calculations"
+        server: "COMMON"
+        
+  - name: "ASK"
+    mode: "human"
+    abilities:
+      - name: "clarify_question"
+        server: "ATLAS"
+        
+  - name: "WAIT"
+    mode: "deterministic"
+    abilities:
+      - name: "extract_answer"
+        server: "ATLAS"
+      - name: "store_answer"
+        server: "internal"
+        
+  - name: "RETRIEVE"
+    mode: "deterministic"
+    abilities:
+      - name: "knowledge_base_search"
+        server: "ATLAS"
+      - name: "store_data"
+        server: "internal"
+        
+  - name: "DECIDE"
+    mode: "non-deterministic"
+    abilities:
+      - name: "solution_evaluation"
+        server: "COMMON"
+      - name: "escalation_decision"
+        server: "ATLAS"
+      - name: "update_payload"
+        server: "internal"
+        
+  - name: "UPDATE"
+    mode: "deterministic"
+    abilities:
+      - name: "update_ticket"
+        server: "ATLAS"
+      - name: "close_ticket"
+        server: "ATLAS"
+        
+  - name: "CREATE"
+    mode: "deterministic"
+    abilities:
+      - name: "response_generation"
+        server: "COMMON"
+        
+  - name: "DO"
+    mode: "deterministic"
+    abilities:
+      - name: "execute_api_calls"
+        server: "ATLAS"
+      - name: "trigger_notifications"
+        server: "ATLAS"
+        
+  - name: "COMPLETE"
+    mode: "deterministic"
+    abilities:
+      - name: "output_payload"
+        server: "internal"
+
+mcp_servers:
+  COMMON:
+    url: "http://localhost:8001"
+    description: "Internal abilities with no external data"
+  ATLAS:
+    url: "http://localhost:8002"
+    description: "External system interaction abilities"
