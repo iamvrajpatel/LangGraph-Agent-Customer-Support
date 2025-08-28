@@ -1,7 +1,7 @@
 import subprocess
 import time
 import sys
-from simple_demo import main
+from main import main
 
 def test_demo():
     server_process = None
