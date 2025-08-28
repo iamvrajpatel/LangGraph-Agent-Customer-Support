@@ -1,5 +1,13 @@
 # Langie - LangGraph Customer Support Agent Implementation
 
+## Architecture Overview
+
+### Customer Support Agent Flow
+![Customer Support Agent](Customer%20Support%20Agent.png)
+
+### Graph Structure
+![Graph Structure](Graph%20Structure.png)
+
 ## Project Overview
 Successfully implemented a structured LangGraph Agent that models customer support workflows as graph-based stages with complete state persistence and MCP client integration.
 
