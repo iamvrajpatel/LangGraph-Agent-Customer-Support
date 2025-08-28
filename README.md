@@ -78,7 +78,7 @@ agentic_ai\
 ├── mcp_client.py            # MCP client implementation
 ├── langgraph_agent.py       # Full LangGraph implementation
 ├── simple_agent.py          # Simplified working version
-├── simple_demo.py           # Demo script
+├── main.py           # Demo script
 ├── requirements.txt         # Dependencies
 └── README.md                # Documentation
 ```
