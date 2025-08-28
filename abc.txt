@@ -31,8 +31,7 @@ langchain-core==0.3.75
 langchain-text-splitters==0.3.9
 langgraph==0.6.6
 langgraph-checkpoint==2.1.1
-# Editable install with no version control (langgraph-customer-support-agent==0.1.0)
--e d:\python\agentic_ai
+-e git+https://github.com/iamvrajpatel/LangGraph-Agent-Customer-Support.git@34f46632f55d9dcc27a7f9f3fd585fc7d582379e#egg=langgraph_customer_support_agent
 langgraph-prebuilt==0.6.4
 langgraph-sdk==0.2.3
 langsmith==0.4.20

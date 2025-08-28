@@ -6,14 +6,14 @@ A customer-support “Langie” agent that runs an 11-stage workflow. The agent 
 * **COMMON** (internal abilities such as parsing, normalization, scoring, response drafting)
 * **ATLAS** (external integrations such as entity extraction, KB search, ticketing, notifications)
 
-The simplified runnable agent (`LangieSimpleAgent`) demonstrates the full workflow without pulling in LangGraph itself, while still doing real (or gracefully mocked) MCP calls.  
+The simplified runnable agent (`LangGraphAgent`) demonstrates the full workflow without pulling in LangGraph itself, while still doing real (or gracefully mocked) MCP calls.  
 
 ---
 
 ## Architecture (at a glance)
 
 ```
-main.py  →  LangieSimpleAgent
+main.py  →  LangGraphAgent
                     │
                     ▼
              MCPClientManager ──► FastMCPClient ──HTTP──► FastMCP Servers
@@ -122,7 +122,7 @@ Customer “John Smith” with a billing issue, `priority="high"`, `ticket_id="1
 
 **How it runs (end-to-end)**
 
-1. `main.py` prints the input and instantiates `LangieSimpleAgent`, which loads `config.yaml`. 
+1. `main.py` prints the input and instantiates `LangGraphAgent`, which loads `config.yaml`. 
 2. The agent initializes a fresh `CustomerSupportState` and iterates across the 11 stages, calling MCP abilities through `MCPClientManager`.
 3. `MCPClientManager` synchronously drives the async `FastMCPClient` (event loop management baked in) to hit `http://localhost:8001/8002/mcp` (or mock on failure).
 4. With the demo data, `solution_score=85` → `escalation_required=True` at **DECIDE**, so the ticket is **not** auto-closed in **UPDATE**.
