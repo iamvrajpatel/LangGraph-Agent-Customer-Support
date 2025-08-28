@@ -13,7 +13,7 @@ The simplified runnable agent (`LangieSimpleAgent`) demonstrates the full workfl
 ## Architecture (at a glance)
 
 ```
-simple_demo.py  →  LangieSimpleAgent
+main.py  →  LangieSimpleAgent
                     │
                     ▼
              MCPClientManager ──► FastMCPClient ──HTTP──► FastMCP Servers
@@ -24,38 +24,12 @@ simple_demo.py  →  LangieSimpleAgent
 
 * **Agent** (`simple_agent.py`) loads `config.yaml`, runs 11 stages in order, logs at each step, and stores everything in a typed state object.
 * **Client layer** (`mcp_client.py`): `MCPClientManager` routes a call to the right server; `FastMCPClient` performs HTTP JSON-RPC requests to `…/mcp`, and **falls back** to mock results if servers aren’t up.
-* **Servers** (`mcp_servers.py`): two FastMCP servers expose discrete `@tool()` abilities (parse, normalize, enrich, evaluate, decide, update ticket, close ticket, KB search, etc.).
-* **Demo runners**: `simple_demo.py` shows the workflow; `run_demo_fastmcp.py` can boot servers then run the demo. 
+* **Servers** (`working_mcp_servers.py`): two FastMCP servers expose discrete `@tool()` abilities (parse, normalize, enrich, evaluate, decide, update ticket, close ticket, KB search, etc.).
+* **Demo runners**: `main.py` shows the workflow; `test_with_servers.py` can boot servers then run the demo. 
 * **State** (`state_models.py`): a `TypedDict` holding all evolving fields across stages—inputs, derived data, decisions, side-effects, logs, final payload.
 
 **One-line flow:**
 Agent → MCPClientManager → FastMCPClient → HTTP → FastMCP Server → Tool → back to Agent (state updates).
-
----
-
-## Requirements
-
-**Python packages**
-
-* `fastmcp` (servers + @tool)
-* `aiohttp` (HTTP client for FastMCPClient)
-* `PyYAML` (load `config.yaml`)
-* `pydantic` (input model)
-
-**How to run**
-
-```bash
-# 1) (optional) run real MCP servers
-python mcp_servers.py
-
-# 2) run the simple demo
-python simple_demo.py
-
-# or: boot servers then demo in one go
-python run_demo_fastmcp.py
-```
-
-When servers aren’t reachable, the client **auto-falls back** to mock responses so the demo still completes. 
 
 ---
 
@@ -148,7 +122,7 @@ Customer “John Smith” with a billing issue, `priority="high"`, `ticket_id="1
 
 **How it runs (end-to-end)**
 
-1. `simple_demo.py` prints the input and instantiates `LangieSimpleAgent`, which loads `config.yaml`. 
+1. `main.py` prints the input and instantiates `LangieSimpleAgent`, which loads `config.yaml`. 
 2. The agent initializes a fresh `CustomerSupportState` and iterates across the 11 stages, calling MCP abilities through `MCPClientManager`.
 3. `MCPClientManager` synchronously drives the async `FastMCPClient` (event loop management baked in) to hit `http://localhost:8001/8002/mcp` (or mock on failure).
 4. With the demo data, `solution_score=85` → `escalation_required=True` at **DECIDE**, so the ticket is **not** auto-closed in **UPDATE**.
@@ -175,5 +149,4 @@ Customer “John Smith” with a billing issue, `priority="high"`, `ticket_id="1
 * **Stages**: INTAKE → UNDERSTAND → PREPARE → ASK → WAIT → RETRIEVE → **DECIDE** → UPDATE → CREATE → DO → COMPLETE.
 * **State**: Single evolving `CustomerSupportState` dict typed by `TypedDict`.
 * **Decision**: Escalate if `solution_score < 90` (demo: 85 → escalated). 
-* **Run it**: `python mcp_servers.py` (optional) → `python simple_demo.py` or `python run_demo_fastmcp.py`. 
-
+* **Run it**: `python working_working_mcp_servers.py` then `python main.py` or `python test_with_servers.py`. 
